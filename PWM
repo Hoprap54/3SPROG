@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <avr/io.h>
+#include <util/delay.h>
+#include "usart.h"
+
+// ENA -> D4
+
+void PWM_Motor(unsigned char);
+
+int main(void){
+    uart_init();
+    while (1){
+        PWM_Motor(100);     // Select speed from 1-255. + number + speed
+    }
+}
+
+inline void PWM_Motor(unsigned char duty){ 
+    DDRD |= (1 << DD6);     // Declare this ENA pin as output     
+    TCCR0A |= (1<<WGM01) | (1<<WGM00);  // Fast PWM configuration
+    TCCR0A |= (1<<COM0A1);              // Non inverting output
+
+    TCCR0B |= (1<<CS02) | (1<<CS00);    // 1024 Prescaler
+    OCR0A = duty; // Set the value to be compared
+}
