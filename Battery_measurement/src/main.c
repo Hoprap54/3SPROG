@@ -23,9 +23,6 @@ int main(void){
     ADCSRA = (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN);
     
     while(1){
-        if(voltagecalc()<3.3){
-            // printf("Less than 3.3v");
-        }
         printf("%f\n", totalvolt);
     }
 }
@@ -34,10 +31,7 @@ uint16_t adc_read(uint8_t adc_channel){
     ADMUX &= 0x00;        // Clear any previously used channel
     ADMUX |= adc_channel; // set the desired channel
     ADCSRA |= (1<<ADSC);  // Start a conversion
-    while ( (ADCSRA & (1<<ADSC)));          // Wait for the conversion to complete
-    
-    // unsigned int adclow = ADCL;
-    // return (adclow + ((ADCH & 0x03) << 8)); // Need to ensure that ADCL is //read first as it is not updated otherwise
+    while ( (ADCSRA & (1<<ADSC))); // Wait for the conversion to complete
     return ADC;
 }
 
