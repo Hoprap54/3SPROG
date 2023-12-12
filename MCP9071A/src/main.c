@@ -2,17 +2,17 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "usart.h"
-
+// Sensor transfer function -> Vout = T_C * T_A + V_0ºC *
 #define ADC_PIN0 0
 
 uint16_t adc_read(uint8_t adc_channel);
 float tempCalc(void);
 
 unsigned int adcval;
-const float vout0 = 400; // Output voltage at 0ºC is 400mV *Given in datasheet
+const float v_0 = 400; // Output voltage at 0ºC is 400mV *Given in datasheet
 const float tc = 19.5;   // mv/ºC *Given in datasheet
 float ta = 20;     // ambient temperature 20ºC
-float vout_avg, vout;
+float vout;
 
 int main(void){
     uart_init();
@@ -35,15 +35,10 @@ uint16_t adc_read(uint8_t adc_channel){
 }
 
 float tempCalc(void){
-    vout_avg = 0;
-    for(int i = 0; i < 1023; i++){
-        vout = adc_read(ADC_PIN0) * (5000/1024.0);
-        vout_avg = vout_avg + vout;
-    }
-    vout = vout_avg/1024;
-    ta = (vout - vout0) / tc;
+    vout = adc_read(ADC_PIN0) * (5000/1023);
+    ta = (vout - v_0) / tc;
 
-    printf("Temp:%fºC   V:%fv\n", ta, vout);
+    printf("Temp:%fºC   V:%fmV\n", ta, vout);
     _delay_ms(1000);
     return 0;
 } 
