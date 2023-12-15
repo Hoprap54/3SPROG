@@ -24,7 +24,7 @@ int main(void){
     ADMUX = (1<<REFS0) | (1<<ADLAR); // Select Vref = AVcc and Shift the result to the left
     // Set prescaler to 128 and turn on the ADC module
     ADCSRA = (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN);
-    
+
     while(1){
         tempCalc();
         _delay_ms(1000);
@@ -35,7 +35,7 @@ uint16_t adc_read(uint8_t adc_channel){
     ADMUX |= adc_channel;
     ADCSRA |= (1<<ADSC);         // Start a conversion
     while((ADCSRA & (1<<ADSC))); // Wait for the conversion to complete
-    _delay_us(10);
+    
     value = ADCH;
     printf("ADCH:%d ", value);
 	return(value); 
