@@ -12,6 +12,7 @@
 #include <util/delay.h>
 #include "usart.h"
 
+/*
 // Optocoupler 1 (Motor 1) Definitions
 #define OPTO_PIN1 PB1  // D9 corresponds to pin PB1
 #define WHEEL_CIRCUMFERENCE1 0.06754 // Example in meters
@@ -53,18 +54,6 @@ void calculateAndPrintSpeed(uint16_t pulseCount, uint32_t timeElapsed, float whe
     printf("%s Speed: %f m/s\n", motorLabel, speed);
 }
 
-
-/*
-void calculateAndPrintSpeed(uint16_t pulseCount, uint32_t timeElapsed, float wheelCircumference, uint8_t segmentsPerRevolution) {
-    float revolutions = (float)pulseCount / segmentsPerRevolution;
-    float distance = revolutions * wheelCircumference;
-    float speed = distance / (timeElapsed / 1000.0); 
-    printf("Pulse Count: %u\n", pulseCount);
-    printf("Speed: %f m/s\n", speed);
-}
-
-*/
-
 int main() {
     uart_init();
     io_redirect();
@@ -101,7 +90,6 @@ int main() {
 
 
 
-        /*
         if (timeElapsed >= 1000) {
             calculateAndPrintSpeed(pulseCount1, timeElapsed, WHEEL_CIRCUMFERENCE1, SEGMENTS_PER_REVOLUTION1);
             calculateAndPrintSpeed(pulseCount2, timeElapsed, WHEEL_CIRCUMFERENCE2, SEGMENTS_PER_REVOLUTION2);
@@ -109,8 +97,26 @@ int main() {
             pulseCount2 = 0;
             timeElapsed = 0;
         }
-        */
+        
     }
 
     return 0;
+}*/
+
+void PWM_Motor(unsigned char);
+
+int main(void){
+    uart_init();
+    while (1){
+        PWM_Motor(100);     // Select speed from 1-255. + number + speed
+    }
+}
+
+inline void PWM_Motor(unsigned char duty){ 
+    DDRD |= (1 << PB2);     // Declare this ENA pin as output     
+    TCCR0A |= (1<<WGM01) | (1<<WGM00);  // Fast PWM configuration
+    TCCR0A |= (1<<COM0A1);              // Non inverting output
+
+    TCCR0B |= (1<<CS02) | (1<<CS00);    // 1024 Prescaler
+    OCR0A = duty; // Set the value to be compared
 }
